@@ -32,6 +32,7 @@ axes(handles.axes3)
 cla
 handles.output = hObject;
 guidata(hObject, handles);
+% warning('off');
 
 % --- Outputs from this function are returned to the command line.
 function varargout = FaceRecognitionTool_OutputFcn(hObject, eventdata, handles)
@@ -42,7 +43,6 @@ function varargout = FaceRecognitionTool_OutputFcn(hObject, eventdata, handles)
 
 % Get default command line output from handles structure
 varargout{1} = handles.output;
-
 
 % --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
@@ -75,7 +75,7 @@ for k = 3:No_Folders_In_Training_Set_Folder
         test = imread(Tmp_Image_Path_Name);
         if length(size(test))==3
             Tmp_Image = rgb2gray(test);
-          else
+        else
             Tmp_Image = test;
         end
         Tmp_Image_Down_Sampled = double(imresize(Tmp_Image,[m1 n1]));
@@ -84,7 +84,6 @@ for k = 3:No_Folders_In_Training_Set_Folder
         
     end
     Class_Count = Class_Count+1;
-    
 end
 close(h)
 A = Image_Data_Matrix;
