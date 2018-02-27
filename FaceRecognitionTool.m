@@ -115,7 +115,7 @@ for k = 3:No_Folders_In_Training_Set_Folder
         test = imread(Tmp_Image_Path_Name);
         if length(size(test))==3
             Tmp_Image = rgb2gray(test);
-          else
+        else
             Tmp_Image = test;
         end
         Tmp_Image_Down_Sampled = double(imresize(Tmp_Image,[m1 n1]));
