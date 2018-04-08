@@ -133,114 +133,80 @@ A = A/(diag(sqrt(diag(A'*A))));
 
 % --- Executes on button press in pushbutton5.
 function pushbutton5_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton5 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
-set(handles.togglebutton3,'visible','off')
-set(handles.togglebutton4,'visible','off');
-set(handles.text3,'visible','off');
-set(handles.edit2,'visible','off');
-set(handles.text4,'visible','off');
-FullPath=uigetdir('');
-IsTrue=0;
-TotImg=0;
-TestFiles=dir(FullPath);
-for k=1:length(TestFiles)
-    if ~strcmp(TestFiles(k,1).name(1),'.')
-        Imgfiles=dir([FullPath '\' TestFiles(k).name]);
-        for m=1:length(Imgfiles)
-            if ~strcmp(Imgfiles(m,1).name(1),'.')
-                axes(handles.axes3)
-                Test_File = [FullPath '\' TestFiles(k,1).name '\' Imgfiles(m,1).name];
-                set(handles.edit1,'string',[TestFiles(k,1).name '\' Imgfiles(m,1).name]);
-                imshow(Test_File)
-                drawnow;
-                test = imread(Test_File);
-                if length(size(test))==3
-                    Test_Image = rgb2gray(test);
-                else
-                    Test_Image = test;
-                end
-                Test_Image_Down_Sampled = double(imresize(Test_Image,[m1 n1]));
-                y = Test_Image_Down_Sampled(:);
-                n = size(A,2);
-                %                 cvx_quiet true
-                %                 cvx_begin
-                %                 variable x1(n)
-                %                 minimize norm(x1,1)
-                %                 subject to
-                %                 A*x1 == y;
-                %                 cvx_end
-                % figure,plot(x1);
-                f=ones(2*n,1);
-                Aeq=[A -A];
-                lb=zeros(2*n,1);
-                x1 = linprog(f,[],[],Aeq,y,lb,[],[],[]);
-                x1 = x1(1:n)-x1(n+1:2*n);
-                nn = No_Files_In_Class_Folder;
-                nn = cumsum(nn);
-                tmp_var = 0;
-                k1 = Class_Count-1;
-                for i = 1:k1
-                    delta_xi = zeros(length(x1),1);
-                    if i == 1
-                        delta_xi(1:nn(i)) = x1(1:nn(i));
-                    else
-                        tmp_var = tmp_var + nn(i-1);
-                        begs = nn(i-1)+1;
-                        ends = nn(i);
-                        delta_xi(begs:ends) = x1(begs:ends);
-                    end
-                    tmp(i) = norm(y-A*delta_xi,2);
-                    tmp1(i) = norm(delta_xi,1)/norm(x1,1);
-                end
-                TotImg=TotImg+1;
-                Sparse_Conc_Index(TotImg) = (k1*max(tmp1)-1)/(k1-1);
-                clss = find(tmp==min(tmp));
-                % figure,plot(tmp)
-                ssttrr = sprintf('The Test Image Corresponds to Class: %d',clss);
-                cccc = dir([Training_Set_Folder]);
-                Which_Folder = dir([Training_Set_Folder,cccc(clss+2).name,'\']);
-                Which_Image = randsample(3:length(Which_Folder),1);
-                Image_Path = [Training_Set_Folder,cccc(clss+2).name,'\',Which_Folder(Which_Image).name];
-                Class_Image = (Image_Path);
-                axes(handles.axes4);
-                imshow(Class_Image)
-                %                 title('Detected Image','Color','black','FontSize',25)
-                
-                set(handles.togglebutton3,'visible','on')
-                set(handles.togglebutton4,'visible','on');
-                set(handles.text3,'visible','on');
-                
-                                while 1
-                                    pause(eps)
-                                    if get(handles.togglebutton3,'value')==1
-                                        IsTrue=IsTrue+1;
-                                        set(handles.togglebutton3,'value',0)
-                                        break;
-                                    elseif get(handles.togglebutton4,'value')==1
-                                        set(handles.togglebutton4,'value',0)
-                                        break;
-                                    end
-                                end
-                set(handles.togglebutton3,'visible','off')
-                set(handles.togglebutton4,'visible','off');
-                set(handles.text3,'visible','off');
-                axes(handles.axes4)
-                %                 cla
-                
+d=uigetdir('','Select Input-folder'); %select the input-folder that contains the subfolders
+cd(d);
+list = dir;
+list = list([list.isdir]); 
+list = list(~ismember({list.name},{'.' '..'}));
+listSize=length(list);
+global countDetected;
+countDetected = 0;
+for folder=1:listSize
+      oldfolder = cd(list(folder).name);
+      files = dir('*.pgm');
+      numberOfFiles = length(files);
+      for k = 1:numberOfFiles
+          file_path = strcat(pwd, '\', files(k).name);
+          test = imread(file_path);
+          if length(size(test))==3
+                Test_Image = rgb2gray(test);
+            else
+                Test_Image = test;
             end
-        end
-    end
+
+
+
+            Test_Image_Down_Sampled = double(imresize(Test_Image,[m1 n1]));
+            y = Test_Image_Down_Sampled(:);
+            n = size(A,2);
+            % fprintf('Processing .... \n')
+            % set(handles.edit3,'String','Processing ... !')
+            % drawnow;
+            % cvx_quiet true
+            % cvx_begin
+            % variable x1(n)
+            % minimize norm(x1,1)
+            % subject to
+            % A*x1 == y;
+            % cvx_end
+            % figure,plot(x1);
+            f=ones(2*n,1);
+            Aeq=[A -A];
+            lb=zeros(2*n,1);
+            x1 = linprog(f,[],[],Aeq,y,lb,[],[],[]);
+            x1 = x1(1:n)-x1(n+1:2*n);
+            nn = No_Files_In_Class_Folder;
+            nn = cumsum(nn);
+            tmp_var = 0;
+            k1 = Class_Count-1;
+            for i = 1:k1
+                delta_xi = zeros(length(x1),1);
+                if i == 1
+                    delta_xi(1:nn(i)) = x1(1:nn(i));
+                else
+                    tmp_var = tmp_var + nn(i-1);
+                    begs = nn(i-1)+1;
+                    ends = nn(i);
+                    delta_xi(begs:ends) = x1(begs:ends);
+                end
+                tmp(i) = norm(y-A*delta_xi,2);
+                tmp1(i) = norm(delta_xi,1)/norm(x1,1);
+            end
+            Sparse_Conc_Index = (k1*max(tmp1)-1)/(k1-1);
+            clss = find(tmp==min(tmp));
+            cccc = dir([Training_Set_Folder]);
+            trainFolder = cccc(clss+2).name;
+            if trainFolder == list(folder).name
+               countDetected = countDetected + 1; 
+            else
+               disp(file_path);
+            end
+      end
+      cd(oldfolder); 
 end
-eta = (IsTrue/TotImg)*100;
-set(handles.edit2,'visible','on');
-set(handles.text4,'visible','on');
-set(handles.edit2,'String',[num2str(eta) '%']);
-drawnow;
-set(handles.togglebutton3,'visible','off')
-set(handles.togglebutton4,'visible','off');
+disp(countDetected);
+
 % --- Executes on button press in pushbutton6.
 function pushbutton6_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbutton6 (see GCBO)
@@ -251,6 +217,8 @@ set(handles.togglebutton3,'visible','off')
 set(handles.togglebutton4,'visible','off');
 set(handles.text3,'visible','off');
 [Test_File Test_File_Path] = uigetfile('*.jpg;*.pgm;*.png;*.tif','Select a Test Image');
+parentFolder = Test_File_Path(end-3:end-1);
+
 test_image_path = [Test_File_Path Test_File];
 axes(handles.axes3)
 cla
@@ -314,7 +282,12 @@ Image_Path = [Training_Set_Folder,cccc(clss+2).name,'\',Which_Folder(Which_Image
 Class_Image = (Image_Path);
 axes(handles.axes4);
 imshow(Class_Image)
-title('Detected Image','Color','black','FontSize',15)
+if  cccc(clss+2).name == parentFolder
+    title('Detected Succesfully','Color','blue','FontSize',15)
+else
+    title('Detect Failed','Color','red','FontSize',15)
+end
+
 
 % --- Executes on button press in togglebutton3.
 function togglebutton3_Callback(hObject, eventdata, handles)
