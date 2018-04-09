@@ -142,6 +142,7 @@ list = list(~ismember({list.name},{'.' '..'}));
 listSize=length(list);
 global countDetected;
 countDetected = 0;
+tic;
 for folder=1:listSize
       oldfolder = cd(list(folder).name);
       files = dir('*.pgm');
@@ -205,6 +206,7 @@ for folder=1:listSize
       end
       cd(oldfolder); 
 end
+toc;
 disp(countDetected);
 
 % --- Executes on button press in pushbutton6.
