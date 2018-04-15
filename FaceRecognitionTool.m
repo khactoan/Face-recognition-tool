@@ -90,8 +90,8 @@ function pushbutton4_Callback(hObject, eventdata, handles)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
 
 Training_Set_Folder = [uigetdir(''),'\'];
-m1 = 6;
-n1 = 3;
+m1 = 8;
+n1 = 4;
 TS_Vector = dir(Training_Set_Folder);
 No_Folders_In_Training_Set_Folder = length(TS_Vector);
 File_Count = 1;
@@ -207,7 +207,7 @@ for folder=1:listSize
       cd(oldfolder); 
 end
 toc;
-disp(countDetected);
+disp(['Recognition rate: ', num2str(countDetected/200 * 100), '%']);
 
 % --- Executes on button press in pushbutton6.
 function pushbutton6_Callback(hObject, eventdata, handles)
