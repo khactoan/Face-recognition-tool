@@ -28,8 +28,7 @@ function varargout = FaceRecognitionTool_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 function pushbutton4_Callback(hObject, eventdata, handles)
-global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
-
+global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder trained
 Training_Set_Folder = [uigetdir(''),'\'];
 m1 = 8;
 n1 = 4;
@@ -70,10 +69,16 @@ end
 close(h)
 A = Image_Data_Matrix;
 A = A/(diag(sqrt(diag(A'*A))));
+trained = true;
 
 
 function pushbutton5_Callback(hObject, eventdata, handles)
-global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
+global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder trained
+if isempty(trained)
+    f = msgbox('Please train image before');
+    return;
+end
+project_path = pwd;
 d=uigetdir('','Select Input-folder'); %select the input-folder that contains the subfolders
 cd(d);
 list = dir;
@@ -90,14 +95,11 @@ for folder=1:listSize
       for k = 1:numberOfFiles
           file_path = strcat(pwd, '\', files(k).name);
           test = imread(file_path);
-          if length(size(test))==3
+            if length(size(test))==3
                 Test_Image = rgb2gray(test);
             else
                 Test_Image = test;
             end
-
-
-
             Test_Image_Down_Sampled = double(imresize(Test_Image,[m1 n1]));
             y = Test_Image_Down_Sampled(:);
             n = size(A,2);
@@ -135,11 +137,19 @@ for folder=1:listSize
       end
       cd(oldfolder); 
 end
-toc;
-disp(['Recognition rate: ', num2str(countDetected/200 * 100), '%']);
+recognition_rate_text = ['Recognition rate: ' num2str(countDetected/200 * 100) '%'];
+finish_time = toc;
+cd(project_path);
+total_time_text = ['Total time: ' num2str(sprintf('%.2f', finish_time)) ' second'];
+set(handles.recognition_result, 'String', recognition_rate_text, 'Visible', 'on');
+set(handles.total_time_result, 'String', total_time_text, 'Visible', 'on');
 
 function pushbutton6_Callback(hObject, eventdata, handles)
-global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
+global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder trained
+if isempty(trained)
+    f = msgbox('Please train image before');
+    return;
+end
 [Test_File Test_File_Path] = uigetfile('*.jpg;*.pgm;*.png;*.tif','Select a Test Image');
 parentFolder = Test_File_Path(end-3:end-1);
 
