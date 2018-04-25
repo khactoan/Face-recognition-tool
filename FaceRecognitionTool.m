@@ -17,11 +17,6 @@ else
 end
 
 function FaceRecognitionTool_OpeningFcn(hObject, eventdata, handles, varargin)
-set(handles.togglebutton3,'visible','off')
-set(handles.togglebutton4,'visible','off');
-set(handles.text3,'visible','off');
-set(handles.edit2,'visible','off');
-set(handles.text4,'visible','off');
 axes(handles.axes4)
 cla
 axes(handles.axes3)
@@ -145,9 +140,6 @@ disp(['Recognition rate: ', num2str(countDetected/200 * 100), '%']);
 
 function pushbutton6_Callback(hObject, eventdata, handles)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
-set(handles.togglebutton3,'visible','off')
-set(handles.togglebutton4,'visible','off');
-set(handles.text3,'visible','off');
 [Test_File Test_File_Path] = uigetfile('*.jpg;*.pgm;*.png;*.tif','Select a Test Image');
 parentFolder = Test_File_Path(end-3:end-1);
 
@@ -205,25 +197,4 @@ if  cccc(clss+2).name == parentFolder
     title('Detected Succesfully','Color','blue','FontSize',15)
 else
     title('Detect Failed','Color','red','FontSize',15)
-end
-
-function togglebutton3_Callback(hObject, eventdata, handles)
-set(handles.togglebutton3,'value',1)
-
-function togglebutton4_Callback(hObject, eventdata, handles)
-set(handles.togglebutton4,'value',1);
-
-function edit1_Callback(hObject, eventdata, handles)
-
-
-function edit1_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
-end
-
-function edit2_Callback(hObject, eventdata, handles)
-
-function edit2_CreateFcn(hObject, eventdata, handles)
-if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
-    set(hObject,'BackgroundColor','white');
 end
