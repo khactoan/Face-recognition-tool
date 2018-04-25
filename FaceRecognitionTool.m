@@ -150,7 +150,7 @@ axes(handles.axes4)
 cla
 axes(handles.axes3)
 imshow(test_image_path);
-title('Test Image','Color','red','FontSize',15);
+title('Test Image','Color','blue','FontSize',15);
 drawnow;
 Test_File = [Test_File_Path Test_File];
 test = imread(Test_File);
