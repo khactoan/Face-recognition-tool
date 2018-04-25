@@ -1,30 +1,4 @@
 function varargout = FaceRecognitionTool(varargin)
-% FACERECOGNITIONTOOL M-file for FaceRecognitionTool.fig
-%      FACERECOGNITIONTOOL, by itself, creates a new FACERECOGNITIONTOOL or raises the existing
-%      singleton*.
-%
-%      H = FACERECOGNITIONTOOL returns the handle to a new FACERECOGNITIONTOOL or the handle to
-%      the existing singleton*.
-%
-%      FACERECOGNITIONTOOL('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in FACERECOGNITIONTOOL.M with the given input arguments.
-%
-%      FACERECOGNITIONTOOL('Property','Value',...) creates a new FACERECOGNITIONTOOL or raises the
-%      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before FaceRecognitionTool_OpeningFcn gets called.  An
-%      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to FaceRecognitionTool_OpeningFcn via varargin.
-%
-%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
-%      instance to run (singleton)".
-%
-% See also: GUIDE, GUIDATA, GUIHANDLES
-
-% Edit the above text to modify the response to help FaceRecognitionTool
-
-% 
-
-% Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
     'gui_Singleton',  gui_Singleton, ...
@@ -41,18 +15,8 @@ if nargout
 else
     gui_mainfcn(gui_State, varargin{:});
 end
-% End initialization code - DO NOT EDIT
 
-
-% --- Executes just before FaceRecognitionTool is made visible.
 function FaceRecognitionTool_OpeningFcn(hObject, eventdata, handles, varargin)
-% This function has no output args, see OutputFcn.
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to FaceRecognitionTool (see VARARGIN)
-
-% Choose default command line output for FaceRecognitionTool
 set(handles.togglebutton3,'visible','off')
 set(handles.togglebutton4,'visible','off');
 set(handles.text3,'visible','off');
@@ -63,30 +27,12 @@ cla
 axes(handles.axes3)
 cla
 handles.output = hObject;
-% addpath(genpath([pwd '\']));
-% Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes FaceRecognitionTool wait for user response (see UIRESUME)
-% uiwait(handles.figure1);
-
-
-% --- Outputs from this function are returned to the command line.
 function varargout = FaceRecognitionTool_OutputFcn(hObject, eventdata, handles)
-% varargout  cell array for returning output args (see VARARGOUT);
-% hObject    handle to figure
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Get default command line output from handles structure
 varargout{1} = handles.output;
 
-
-% --- Executes on button press in pushbutton4.
 function pushbutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
 
 Training_Set_Folder = [uigetdir(''),'\'];
@@ -131,7 +77,6 @@ A = Image_Data_Matrix;
 A = A/(diag(sqrt(diag(A'*A))));
 
 
-% --- Executes on button press in pushbutton5.
 function pushbutton5_Callback(hObject, eventdata, handles)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
 d=uigetdir('','Select Input-folder'); %select the input-folder that contains the subfolders
@@ -161,17 +106,6 @@ for folder=1:listSize
             Test_Image_Down_Sampled = double(imresize(Test_Image,[m1 n1]));
             y = Test_Image_Down_Sampled(:);
             n = size(A,2);
-            % fprintf('Processing .... \n')
-            % set(handles.edit3,'String','Processing ... !')
-            % drawnow;
-            % cvx_quiet true
-            % cvx_begin
-            % variable x1(n)
-            % minimize norm(x1,1)
-            % subject to
-            % A*x1 == y;
-            % cvx_end
-            % figure,plot(x1);
             f=ones(2*n,1);
             Aeq=[A -A];
             lb=zeros(2*n,1);
@@ -209,11 +143,7 @@ end
 toc;
 disp(['Recognition rate: ', num2str(countDetected/200 * 100), '%']);
 
-% --- Executes on button press in pushbutton6.
 function pushbutton6_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton6 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
 global A m1 n1 No_Files_In_Class_Folder Class_Count Training_Set_Folder
 set(handles.togglebutton3,'visible','off')
 set(handles.togglebutton4,'visible','off');
@@ -230,8 +160,6 @@ axes(handles.axes3)
 imshow(test_image_path);
 title('Test Image','Color','red','FontSize',15);
 drawnow;
-% set(handles.edit2,'string',test_image_path);
-% set(handles.text5,'Visible','Off');
 Test_File = [Test_File_Path Test_File];
 test = imread(Test_File);
 if length(size(test))==3
@@ -242,17 +170,6 @@ end
 Test_Image_Down_Sampled = double(imresize(Test_Image,[m1 n1]));
 y = Test_Image_Down_Sampled(:);
 n = size(A,2);
-% fprintf('Processing .... \n')
-% set(handles.edit3,'String','Processing ... !')
-% drawnow;
-% cvx_quiet true
-% cvx_begin
-% variable x1(n)
-% minimize norm(x1,1)
-% subject to
-% A*x1 == y;
-% cvx_end
-% figure,plot(x1);
 f=ones(2*n,1);
 Aeq=[A -A];
 lb=zeros(2*n,1);
@@ -290,48 +207,23 @@ else
     title('Detect Failed','Color','red','FontSize',15)
 end
 
-
-% --- Executes on button press in togglebutton3.
 function togglebutton3_Callback(hObject, eventdata, handles)
-% hObject    handle to togglebutton3 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of togglebutton3
 set(handles.togglebutton3,'value',1)
 
-% --- Executes on button press in togglebutton4.
 function togglebutton4_Callback(hObject, eventdata, handles)
-% hObject    handle to togglebutton4 (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hint: get(hObject,'Value') returns toggle state of togglebutton4
 set(handles.togglebutton4,'value',1);
 
 function edit1_Callback(hObject, eventdata, handles)
 
 
 function edit1_CreateFcn(hObject, eventdata, handles)
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
 
-
-% function pushbutton7_Callback(hObject, eventdata, handles)
-% error('');
-
-
 function edit2_Callback(hObject, eventdata, handles)
 
-
 function edit2_CreateFcn(hObject, eventdata, handles)
-
-% Hint: edit controls usually have a white background on Windows.
-%       See ISPC and COMPUTER.
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
