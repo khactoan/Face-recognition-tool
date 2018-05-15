@@ -38,7 +38,7 @@ File_Count = 1;
 Class_Count = 1;
 h = waitbar(0,'Reading Test Images,Please wait...');
 for k = 3:No_Folders_In_Training_Set_Folder
-    waitbar(k/(No_Folders_In_Training_Set_Folder-2))
+    waitbar(k/(No_Folders_In_Training_Set_Folder-2));
     Class_Folder = [Training_Set_Folder '\' TS_Vector(k).name,'\'];
     CF_Tensor = dir(Class_Folder);
     No_Files_In_Class_Folder(Class_Count) = length(CF_Tensor)-2;
@@ -80,6 +80,7 @@ if isempty(trained)
 end
 project_path = pwd;
 d=uigetdir('','Select Input-folder'); %select the input-folder that contains the subfolders
+waiting_bar = waitbar(0,'Recognizing all your test image,Please wait...');
 cd(d);
 list = dir;
 list = list([list.isdir]); 
@@ -89,6 +90,7 @@ global countDetected;
 countDetected = 0;
 tic;
 for folder=1:listSize
+      waitbar(folder/listSize);
       oldfolder = cd(list(folder).name);
       files = dir('*.pgm');
       numberOfFiles = length(files);
@@ -139,6 +141,7 @@ for folder=1:listSize
 end
 recognition_rate_text = ['Recognition rate: ' num2str(countDetected/200 * 100) '%'];
 finish_time = toc;
+close(waiting_bar);
 cd(project_path);
 total_time_text = ['Total time: ' num2str(sprintf('%.2f', finish_time)) ' second'];
 set(handles.recognition_result, 'String', recognition_rate_text, 'Visible', 'on');
