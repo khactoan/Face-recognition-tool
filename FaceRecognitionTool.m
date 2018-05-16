@@ -88,14 +88,16 @@ list = list(~ismember({list.name},{'.' '..'}));
 listSize=length(list);
 global countDetected;
 countDetected = 0;
+countFile = 0;
 tic;
 for folder=1:listSize
       waitbar(folder/listSize);
       oldfolder = cd(list(folder).name);
-      files = dir('*.pgm');
-      numberOfFiles = length(files);
+      files = dir;
+      numberOfFiles = length(files)-2;
+      countFile = countFile + numberOfFiles;
       for k = 1:numberOfFiles
-          file_path = strcat(pwd, '\', files(k).name);
+          file_path = strcat(pwd, '\', files(k+2).name);
           test = imread(file_path);
             if length(size(test))==3
                 Test_Image = rgb2gray(test);
@@ -139,7 +141,7 @@ for folder=1:listSize
       end
       cd(oldfolder); 
 end
-recognition_rate_text = ['Recognition rate: ' num2str(countDetected/200 * 100) '%'];
+recognition_rate_text = ['Recognition rate: ' num2str(sprintf('%.2f', (countDetected/countFile * 100))) '%'];
 finish_time = toc;
 close(waiting_bar);
 cd(project_path);
